@@ -67,8 +67,8 @@ class _EventListState extends State<EventList> {
                                 context: context,
                                 builder: (_) => AlertDialog(
                                   backgroundColor: Colors.white,
-                                  title: Text("Confirme a exclusão"),
-                                  content: Text(
+                                  title: const Text("Confirme a exclusão"),
+                                  content: const Text(
                                       "Você tem certeza de que deseja continuar?"),
                                   actions: [
                                     Row(

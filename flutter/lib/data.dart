@@ -1,15 +1,12 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:dti_digital/serialize.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 
 //
-String ip = "192.168.2.6";
+String ip = "localhost";
 String porta = "8090";
 Dio dio = Dio(BaseOptions(baseUrl: 'http://$ip:$porta'));
 
@@ -31,13 +28,17 @@ Future<List<EventData>> fetchData(DateTime newDate) async {
       return events;
     } else {
       // Trate outros códigos de status, se necessário
-      print('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
-      throw Exception('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+      if (kDebugMode) {
+        print('*** Erro - ip: Altere a variavel ip na linha 9 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+      }
+      throw Exception('*** Erro - ip: Altere a variavel ip na linha 9 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
     }
   } catch (e) {
     // Lidar com exceções, se houver algum problema na solicitação
-    print('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
-    throw Exception('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+    if (kDebugMode) {
+      print('*** Erro - ip: Altere a variavel ip na linha 9 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+    }
+    throw Exception('*** Erro - ip: Altere a variavel ip na linha 9 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
   }
 }
 
@@ -58,11 +59,17 @@ Future<void> insertDataOnJson(
     // Verifique a resposta
     if (response.statusCode == 200) {
       // Requisição bem-sucedida, você pode processar a resposta aqui
-      print('Requisição POST bem-sucedida!');
-      print('Resposta: ${response.data}');
+      if (kDebugMode) {
+        print('Requisição POST bem-sucedida!');
+      }
+      if (kDebugMode) {
+        print('Resposta: ${response.data}');
+      }
     } else {
       // Requisição falhou
-      print('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+      if (kDebugMode) {
+        print('*** Erro - ip: Altere a variavel ip na linha 9 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+      }
     }
 
     if (context.mounted) {
@@ -121,21 +128,21 @@ Future<void> insertDataOnJson(
     }
   } catch (e) {
     if (kDebugMode) {
-      print('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+      print('*** Erro - ip: Altere a variavel ip na linha 9 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
     }
   }
 }
 
 void deleteDatafromJson(String nome, context, appState) async {
-  Directory documentsDirectory = await getApplicationDocumentsDirectory();
-
   try {
     // Realiza a requisição DELETE
     Response response = await dio.delete('/events/$nome');
 
     // Verifica se a requisição foi bem-sucedida
     if (response.statusCode == 200) {
-      print('Evento deletado com sucesso!');
+        if (kDebugMode) {
+        print('Evento deletado com sucesso!');
+      }
     } else {
       throw Exception('Falha ao deletar o evento. Código de resposta: ${response.statusCode}');
     }
