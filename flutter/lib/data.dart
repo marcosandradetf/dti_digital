@@ -31,13 +31,13 @@ Future<List<EventData>> fetchData(DateTime newDate) async {
       return events;
     } else {
       // Trate outros códigos de status, se necessário
-      print('Erro: ${response.statusCode}');
-      return [];
+      print('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+      throw Exception('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
     }
   } catch (e) {
     // Lidar com exceções, se houver algum problema na solicitação
-    print('Erro: $e');
-    return [];
+    print('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
+    throw Exception('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
   }
 }
 
@@ -62,7 +62,7 @@ Future<void> insertDataOnJson(
       print('Resposta: ${response.data}');
     } else {
       // Requisição falhou
-      print('Erro na requisição POST. Código: ${response.statusCode}');
+      print('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
     }
 
     if (context.mounted) {
@@ -121,7 +121,7 @@ Future<void> insertDataOnJson(
     }
   } catch (e) {
     if (kDebugMode) {
-      print("Erro ao salvar o arquivo: $e");
+      print('*** Erro - ip: Altere a variavel ip na linha 12 do arquivo lib/data.dart para o endereço ipv4 da sua maquina ***');
     }
   }
 }
