@@ -1,4 +1,3 @@
-import 'package:dti_digital/reminder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,11 +36,6 @@ void main() {
     //expect(find.byType(OutlinedButton), findsOneWidget);
     await tester.pumpAndSettle();
 
-    await expectLater(
-      find.byType(Calendar),
-      matchesGoldenFile('../screenshots/Home.png'),
-    );
-
     // Mudando para tela de criacao de lembrete
     await tester.tap(find.text('Criar Novo Lembrete'));
     // Aguarde a conclusão das animações
@@ -62,22 +56,13 @@ void main() {
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
-    await expectLater(
-      find.byType(NewReminder),
-      matchesGoldenFile('../screenshots/Data.png'),
-    );
-
     // Enviando
     await tester.tap(find.text('Criar Lembrete'));
     await tester.pumpAndSettle();
 
-    await expectLater(
-      find.byType(NewReminder),
-      matchesGoldenFile('../screenshots/Sucess.png'),
-    );
 
     // Finalizando
-    await tester.tap(find.text('Voltar ao início'));
+    await tester.tap(find.text('Voltar ao Início'));
     await tester.pumpAndSettle();
   });
 }

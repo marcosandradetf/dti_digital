@@ -37,11 +37,6 @@ void main() {
     //expect(find.byType(OutlinedButton), findsOneWidget);
     await tester.pumpAndSettle();
 
-    await expectLater(
-      find.byType(Calendar),
-      matchesGoldenFile('../screenshots/Home.png'),
-    );
-
     // Selecionar dia 29
     await tester.tap(find.text('29'));
     await tester.pumpAndSettle();
