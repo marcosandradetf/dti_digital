@@ -6,38 +6,38 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
+
+//
+String ip = "192.168.2.6";
+String porta = "8090";
+Dio dio = Dio(BaseOptions(baseUrl: 'http://$ip:$porta'));
 
 
 Future<List<EventData>> fetchData(DateTime newDate) async {
   DateTime currentDate = newDate;
-  Directory documentsDirectory = await getApplicationDocumentsDirectory();
-  String documentsPath = documentsDirectory.path;
   final DateFormat dateFormatter = DateFormat('dd/MM/yyyy');
 
   try {
-    // Carrega o conteúdo do arquivo JSON local
-    final File file = File("$documentsPath/form_data.json");
+    Response response = await dio.get("/events");
 
-    // Verifica se o arquivo existe
-    if (!(await file.exists())) {
+    if (response.statusCode == 200) {
+      // Filtre os eventos durante a leitura da resposta
+      final List<EventData> events = (response.data as List)
+          .map((json) => EventData.fromJson(json))
+          .where((event) => event.data == dateFormatter.format(currentDate))
+          .toList();
+
+      return events;
+    } else {
+      // Trate outros códigos de status, se necessário
+      print('Erro: ${response.statusCode}');
       return [];
     }
-
-    // carregando JSON
-    final List<String> jsonLines = await file.readAsLines();
-
-    // converter linhas em objetos EventData
-    final List<EventData> events =
-        jsonLines.map((json) => EventData.fromJson(jsonDecode(json))).toList();
-
-    // filtro
-    final eventDay = events
-        .where((event) => event.data == dateFormatter.format(currentDate))
-        .toList();
-
-    return eventDay;
-  } catch (error) {
-    throw Exception('Falha ao carregar os dados: $error');
+  } catch (e) {
+    // Lidar com exceções, se houver algum problema na solicitação
+    print('Erro: $e');
+    return [];
   }
 }
 
@@ -50,17 +50,20 @@ Future<void> insertDataOnJson(
       'data': data,
     };
 
-    // Codificando o mapa para uma string JSON
-    String jsonData = jsonEncode(formData);
+    Response response = await dio.post(
+      "/events",
+      data: formData,
+    );
 
-    // Obtendo o caminho do diretório de documentos do aplicativo
-    String documentsPath = (await getApplicationDocumentsDirectory()).path;
-
-    // Cria o arquivo ou abre se já existir
-    File file = File('$documentsPath/form_data.json');
-
-    // Escreve os dados JSON no arquivo
-    file.writeAsString('$jsonData\n', mode: FileMode.append);
+    // Verifique a resposta
+    if (response.statusCode == 200) {
+      // Requisição bem-sucedida, você pode processar a resposta aqui
+      print('Requisição POST bem-sucedida!');
+      print('Resposta: ${response.data}');
+    } else {
+      // Requisição falhou
+      print('Erro na requisição POST. Código: ${response.statusCode}');
+    }
 
     if (context.mounted) {
       showDialog(
@@ -125,27 +128,17 @@ Future<void> insertDataOnJson(
 
 void deleteDatafromJson(String nome, context, appState) async {
   Directory documentsDirectory = await getApplicationDocumentsDirectory();
-  String documentsPath = documentsDirectory.path;
 
   try {
-    // ler json file
-    File file = File("$documentsPath/form_data.json");
-    List<String> jsonLines = await file.readAsLines();
+    // Realiza a requisição DELETE
+    Response response = await dio.delete('/events/$nome');
 
-    // analisa json
-    List<dynamic> data = jsonLines.map((line) => json.decode(line)).toList();
-
-    // deletando a entrada
-    data.removeWhere((element) => element["nome"] == nome);
-
-    // converte os dados atualizados de volta no JSON
-    List<String> updatedJson = data.map((entry) => json.encode(entry)).toList();
-
-    // Adiciona uma quebra de linha no final do arquivo
-    updatedJson.add('');
-
-    // escreve os dados atualizados no JSON
-    await file.writeAsString(updatedJson.join("\n"), mode: FileMode.write);
+    // Verifica se a requisição foi bem-sucedida
+    if (response.statusCode == 200) {
+      print('Evento deletado com sucesso!');
+    } else {
+      throw Exception('Falha ao deletar o evento. Código de resposta: ${response.statusCode}');
+    }
 
     // Notifica os ouvintes sobre a mudança nos dados
     appState.notifyListeners();
@@ -179,7 +172,6 @@ void deleteDatafromJson(String nome, context, appState) async {
               ],
             );
           });
-
     }
   } catch (error) {
     throw Exception('Falha ao apagar o dado: $error');

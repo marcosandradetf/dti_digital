@@ -26,18 +26,6 @@ void main() {
 }
 
 class AppState extends ChangeNotifier {
-  int clickedID = 0;
-
-  void updateClickedID(int id) {
-    clickedID = id;
-    notifyListeners();
-  }
-
-  String clickedName = "";
-
-  void setClickedName(String name) {
-    clickedName = name;
-  }
 
   DateTime currentDate = DateTime(2023, 11, 26);
 
